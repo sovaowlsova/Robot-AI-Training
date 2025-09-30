@@ -3,47 +3,7 @@ guid: b3bca58f4f4d034409fc5260e3b917fb
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Antenna
-    second: {fileID: 2100000, guid: fbefb7081372e5e448ed67bc8791291d, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Base
-    second: {fileID: 2100000, guid: dbe1de13664b17346b4cb458472298d8, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Fox_face
-    second: {fileID: 2100000, guid: 21bd25ce26d5adf4a8e9077535aaaee8, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Inside
-    second: {fileID: 2100000, guid: 6ef4f539e7a6383418a4fc8623e6d2ef, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: MiddleWheel
-    second: {fileID: 2100000, guid: b1d7b7c47a69c654698e14a722ad5f7b, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Screw
-    second: {fileID: 2100000, guid: 9c9447a4f832caa41b222edeab87f21e, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Tire
-    second: {fileID: 2100000, guid: 38420a4a9aba5b9418b138fac23d7cc1, type: 2}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: fox_face
-    second: {fileID: 2800000, guid: 4e8306cfc7e63d245b9ac26fb80c6311, type: 3}
+  externalObjects: {}
   materials:
     materialImportMode: 2
     materialName: 0
