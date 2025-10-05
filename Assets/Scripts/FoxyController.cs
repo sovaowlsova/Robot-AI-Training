@@ -1,4 +1,3 @@
-using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -39,13 +38,13 @@ public class FoxyController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        getInput();
-        handleMotor();
-        handleSteering();
-        updateWheels();
+        GetInput();
+        HandleMotor();
+        HandleSteering();
+        UpdateWheels();
     }
 
-    private void getInput()
+    private void GetInput()
     {
         Vector2 moveResult = moveAction.ReadValue<Vector2>();
         verticalInput = moveResult.y;
@@ -54,7 +53,7 @@ public class FoxyController : MonoBehaviour
         isBraking = brakeAction.ReadValue<float>() > epsilon ? true : false;
     }
 
-    private void handleMotor()
+    private void HandleMotor()
     {
         float newTorque = -verticalInput * motorForce;
         frontLeftWheelColldier.motorTorque = frontRighttWheelColldier.motorTorque = newTorque;
@@ -71,7 +70,7 @@ public class FoxyController : MonoBehaviour
         rearRighttWheelColldier.brakeTorque = currentBrakingForce;
     }
 
-    private void handleSteering()
+    private void HandleSteering()
     {
         if (horizontalInput > 0)
         {
@@ -95,7 +94,7 @@ public class FoxyController : MonoBehaviour
         frontLeftWheelColldier.steerAngle = frontRighttWheelColldier.steerAngle = currentSteerAngle;
     }
 
-    private void updateWheelTransform(WheelCollider wheelCollider, Transform wheelTransform)
+    private void UpdateWheelTransform(WheelCollider wheelCollider, Transform wheelTransform)
     {
         Vector3 pos;
         Quaternion rot;
@@ -104,11 +103,11 @@ public class FoxyController : MonoBehaviour
         wheelTransform.rotation = rot;
     }
 
-    private void updateWheels()
+    private void UpdateWheels()
     {
-        updateWheelTransform(frontLeftWheelColldier, frontLeftWheelTransform);
-        updateWheelTransform(frontRighttWheelColldier, frontRightWheelTransform);
-        updateWheelTransform(rearLeftWheelColldier, rearLeftWheelTransform);
-        updateWheelTransform(rearRighttWheelColldier, rearRightWheelTransform);
+        UpdateWheelTransform(frontLeftWheelColldier, frontLeftWheelTransform);
+        UpdateWheelTransform(frontRighttWheelColldier, frontRightWheelTransform);
+        UpdateWheelTransform(rearLeftWheelColldier, rearLeftWheelTransform);
+        UpdateWheelTransform(rearRighttWheelColldier, rearRightWheelTransform);
     }
 }
