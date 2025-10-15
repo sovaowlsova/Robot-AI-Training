@@ -8,6 +8,12 @@ public class FoxyController : MonoBehaviour
     [SerializeField] private float maxSteerAngle = 15f;
     [SerializeField] private float steerSpeed = 20f;
 
+    [SerializeField] private float warningDistance = 1;
+    [SerializeField] private float stopDistance = 0.2f;
+
+    [SerializeField] private LampScript warningLamp;
+    [SerializeField] private LampScript stopLamp;
+
     [SerializeField] private Transform frontLeftWheelTransform;
     [SerializeField] private Transform frontRightWheelTransform;
     [SerializeField] private Transform rearLeftWheelTransform;
@@ -17,6 +23,8 @@ public class FoxyController : MonoBehaviour
     [SerializeField] private WheelCollider frontRighttWheelColldier;
     [SerializeField] private WheelCollider rearLeftWheelColldier;
     [SerializeField] private WheelCollider rearRighttWheelColldier;
+
+    [SerializeField] private SonarScript sonar;
 
     private InputAction moveAction;
     private InputAction brakeAction;
@@ -49,8 +57,35 @@ public class FoxyController : MonoBehaviour
         Vector2 moveResult = moveAction.ReadValue<Vector2>();
         verticalInput = moveResult.y;
         horizontalInput = moveResult.x;
-
+        
         isBraking = brakeAction.ReadValue<float>() > epsilon ? true : false;
+        HandleSonar();
+    }
+
+    private void HandleSonar()
+    {
+        if (sonar.GetDistance() < warningDistance)
+        {
+            warningLamp.Toggle(true);
+        }
+        else
+        {
+            warningLamp.Toggle(false);
+        }
+
+        if (sonar.GetDistance() < stopDistance)
+        {
+            stopLamp.Toggle(true);
+
+            if (verticalInput >= 0)
+            {
+                isBraking = true;
+            }
+        }
+        else
+        {
+            stopLamp.Toggle(false);
+        }
     }
 
     private void HandleMotor()

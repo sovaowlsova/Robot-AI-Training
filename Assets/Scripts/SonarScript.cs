@@ -11,10 +11,13 @@ public class SonarScript : MonoBehaviour
 
     private List<Collider> collidersInside = new List<Collider>();
     private int detectableColliders = 0;
+    private float closestObject;
 
 
     private void FixedUpdate()
     {
+        closestObject = maxDistance;
+        
         foreach (Collider collider in collidersInside)
         {
             if (ValidateDetection(collider))
@@ -31,7 +34,12 @@ public class SonarScript : MonoBehaviour
         }
     }
 
-    public bool isTriggered()
+    public float GetDistance()
+    {
+        return closestObject;
+    }
+
+    public bool IsTriggered()
     {
         return detectableColliders > 0;
     }
@@ -81,6 +89,11 @@ public class SonarScript : MonoBehaviour
         if (hitTransmitter.distance < minDistance || hitReceiver.distance < minDistance)
         {
             return false;
+        }
+
+        if (hitReceiver.distance < closestObject)
+        {
+            closestObject = hitReceiver.distance;
         }
 
         return true;

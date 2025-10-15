@@ -14,7 +14,7 @@ public class SonarTestScript : MonoBehaviour
 
     private void Update()
     {
-        if (sonar.isTriggered())
+        if (sonar.IsTriggered())
         {
             if (!isOn)
             {
