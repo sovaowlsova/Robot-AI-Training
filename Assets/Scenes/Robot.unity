@@ -1100,7 +1100,7 @@ MonoBehaviour:
   frontRighttWheelColldier: {fileID: 342166456}
   rearLeftWheelColldier: {fileID: 342166455}
   rearRighttWheelColldier: {fileID: 342166454}
-  sonar: {fileID: 9013638941688049695}
+  sonar: {fileID: 1860193892426825919}
 --- !u!1 &1478454172
 GameObject:
   m_ObjectHideFlags: 0
@@ -1114,7 +1114,7 @@ GameObject:
   - component: {fileID: 1478454174}
   - component: {fileID: 1478454176}
   m_Layer: 5
-  m_Name: SonarDistnce
+  m_Name: SonarDistance
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1250,7 +1250,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2c6397d4a188364c8bdaec45d7e185b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SonarUIScript
-  sonar: {fileID: 9013638941688049695}
+  sonar: {fileID: 1860193892426825919}
 --- !u!1 &1705558880
 GameObject:
   m_ObjectHideFlags: 0
@@ -1458,21 +1458,46 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 358985085277753840, guid: 10e0d1a2249984444b74d6362d1df74d, type: 3}
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2189865826445528023, guid: 10e0d1a2249984444b74d6362d1df74d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1860193892426825919}
   m_SourcePrefab: {fileID: 100100000, guid: 10e0d1a2249984444b74d6362d1df74d, type: 3}
---- !u!114 &9013638941688049695 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6597842484414194911, guid: 10e0d1a2249984444b74d6362d1df74d, type: 3}
+--- !u!1 &1860193892426825918 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2189865826445528023, guid: 10e0d1a2249984444b74d6362d1df74d, type: 3}
   m_PrefabInstance: {fileID: 1860193892426825917}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+--- !u!114 &1860193892426825919
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1860193892426825918}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c373d549a539ca84f992702ac65fecdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SonarScript
+  transmitter: {fileID: 1860193892426825920}
+  receiver: {fileID: 1860193892426825921}
+  maxDistance: 2
+  minDistance: 0.02
+  measuringAngleEuler: 15
+--- !u!4 &1860193892426825920 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7273345974434569122, guid: 10e0d1a2249984444b74d6362d1df74d, type: 3}
+  m_PrefabInstance: {fileID: 1860193892426825917}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1860193892426825921 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8987094621467811207, guid: 10e0d1a2249984444b74d6362d1df74d, type: 3}
+  m_PrefabInstance: {fileID: 1860193892426825917}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -17,6 +17,7 @@ public class CameraScript : MonoBehaviour
 
     private void Awake()
     {
+        Cursor.visible = false;
         lookAction = InputSystem.actions.FindAction("Look");
         zoomAction = InputSystem.actions.FindAction("Zoom");
     }

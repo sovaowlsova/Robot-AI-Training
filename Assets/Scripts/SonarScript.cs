@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,30 +9,31 @@ public class SonarScript : MonoBehaviour
 
     [SerializeField] private float maxDistance;
     [SerializeField] private float minDistance;
+    [SerializeField] private float measuringAngleEuler;
 
-    private List<Collider> collidersInside = new List<Collider>();
-    private int detectableColliders = 0;
     private float closestObject;
+    private float raycastSphereRadius;
+    private float raycastDistance;
 
+    private Vector3 transmitterBackwards;
+    private Vector3 receiverBackwards;
+    private Vector3 origin;
+
+    private void Awake()
+    {
+        closestObject = maxDistance;
+
+        float halvedAngle = measuringAngleEuler / 2f * ((float)Math.PI / 180f);
+        raycastSphereRadius = Mathf.Tan(halvedAngle) * maxDistance * 2f;
+        raycastDistance = maxDistance - raycastSphereRadius;
+    }
 
     private void FixedUpdate()
     {
+        transmitterBackwards = transmitter.forward * -1;
+        receiverBackwards = receiver.forward * -1;
         closestObject = maxDistance;
-        
-        foreach (Collider collider in collidersInside)
-        {
-            if (ValidateDetection(collider))
-            {
-                if (detectableColliders < collidersInside.Count)
-                {
-                    detectableColliders++;
-                }
-            }
-            else
-            {
-                detectableColliders--;
-            }
-        }
+        FindClosestObject();
     }
 
     public float GetDistance()
@@ -39,47 +41,56 @@ public class SonarScript : MonoBehaviour
         return closestObject;
     }
 
-    public bool IsTriggered()
+    private void FindClosestObject()
     {
-        return detectableColliders > 0;
-    }
+        origin = transmitter.position + transmitterBackwards * raycastSphereRadius;
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (ValidateDetection(other))
+        // SphereCastAll returns (0, 0, 0) if there's an object inside the first sphere
+        // Yes. Unity design is dum-dum so we have to do this absolute mess
+        List<RaycastHit> allHits = new List<RaycastHit>();
+
+        RaycastHit[] sphereHits = Physics.SphereCastAll(origin, raycastSphereRadius, transmitterBackwards, raycastDistance);
+        allHits.AddRange(sphereHits);
+
+        Collider[] overlappedFirst = Physics.OverlapSphere(origin, raycastSphereRadius);
+        foreach (Collider collider in overlappedFirst)
         {
-            collidersInside.Add(other);
-            detectableColliders++;
+            Vector3 closestPoint = collider.ClosestPoint(receiver.transform.position);
+            RaycastHit hit;
+            if (Physics.Raycast(closestPoint, (closestPoint - receiver.position).normalized, out hit, maxDistance))
+            {
+                allHits.Add(hit);
+            }
+        }
+
+        foreach (RaycastHit hit in allHits) 
+        {
+            float distance = Vector3.Distance(receiver.position, hit.point);
+            if (ValidateHit(hit) && distance < closestObject) 
+            {
+                closestObject = distance;
+            }
         }
     }
-
-    private void OnTriggerExit(Collider other)
-    {
-        collidersInside.Remove(other);
-        detectableColliders--;
-    }
-
-    private bool ValidateDetection(Collider other)
+    
+    private bool ValidateHit(RaycastHit hit)
     {
         RaycastHit hitTransmitter;
         RaycastHit hitReceiver;
 
-        Vector3 closestPointToTransmitter = other.ClosestPoint(transmitter.position);
-        Vector3 closestPointToReceiver = other.ClosestPoint(receiver.position);
-
-        Vector3 directionToTransmitter = (transmitter.position - closestPointToTransmitter).normalized;
-        Vector3 directionToReceiver = (receiver.position - closestPointToReceiver).normalized;
+        Vector3 directionToTransmitter = (transmitter.position - hit.point).normalized;
+        Vector3 directionToReceiver = (receiver.position - hit.point).normalized;
 
         // Did raycast hit anything?
-        if (!Physics.Raycast(closestPointToTransmitter, directionToTransmitter, out hitTransmitter, maxDistance) ||
-            !Physics.Raycast(closestPointToReceiver, directionToReceiver, out hitReceiver, maxDistance))
+        if (!Physics.Raycast(hit.point, directionToTransmitter, out hitTransmitter, maxDistance) ||
+            !Physics.Raycast(hit.point, directionToReceiver, out hitReceiver, maxDistance))
         {
             return false;
         }
 
          // Check if raycast hit the sensor
-        if (hitTransmitter.collider.transform.parent != transform.parent ||
-            hitReceiver.collider.transform.parent != transform.parent)
+        if (hitTransmitter.collider.transform.parent != transform ||
+            hitReceiver.collider.transform.parent != transform)
         {
             return false;
         }
@@ -91,9 +102,11 @@ public class SonarScript : MonoBehaviour
             return false;
         }
 
-        if (hitReceiver.distance < closestObject)
+        // Check angle
+        if (Vector3.Angle(transmitterBackwards, directionToTransmitter * -1) > measuringAngleEuler ||
+            Vector3.Angle(receiverBackwards, directionToReceiver * -1) > measuringAngleEuler)
         {
-            closestObject = hitReceiver.distance;
+            return false;
         }
 
         return true;
