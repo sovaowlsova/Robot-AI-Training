@@ -7,17 +7,17 @@ public class SonarScript : MonoBehaviour
     [SerializeField] private Transform transmitter;
     [SerializeField] private Transform receiver;
 
+    [SerializeField] private int precision = 4;
+
     [SerializeField] private float maxDistance;
     [SerializeField] private float minDistance;
     [SerializeField] private float measuringAngleEuler;
 
     private float closestObject;
     private float raycastSphereRadius;
-    private float raycastDistance;
 
     private Vector3 transmitterBackwards;
     private Vector3 receiverBackwards;
-    private Vector3 origin;
 
     private void Awake()
     {
@@ -25,7 +25,6 @@ public class SonarScript : MonoBehaviour
 
         float halvedAngle = measuringAngleEuler / 2f * ((float)Math.PI / 180f);
         raycastSphereRadius = Mathf.Tan(halvedAngle) * maxDistance * 2f;
-        raycastDistance = maxDistance - raycastSphereRadius;
     }
 
     private void FixedUpdate()
@@ -43,24 +42,14 @@ public class SonarScript : MonoBehaviour
 
     private void FindClosestObject()
     {
-        origin = transmitter.position + transmitterBackwards * raycastSphereRadius;
+        Vector3 origin = transmitter.position - transmitterBackwards * raycastSphereRadius;
 
-        // SphereCastAll returns (0, 0, 0) if there's an object inside the first sphere
-        // Yes. Unity design is dum-dum so we have to do this absolute mess
         List<RaycastHit> allHits = new List<RaycastHit>();
 
-        RaycastHit[] sphereHits = Physics.SphereCastAll(origin, raycastSphereRadius, transmitterBackwards, raycastDistance);
-        allHits.AddRange(sphereHits);
-
-        Collider[] overlappedFirst = Physics.OverlapSphere(origin, raycastSphereRadius);
-        foreach (Collider collider in overlappedFirst)
+        for (int i = 1; i <= precision; i++)
         {
-            Vector3 closestPoint = collider.ClosestPoint(receiver.transform.position);
-            RaycastHit hit;
-            if (Physics.Raycast(closestPoint, (closestPoint - receiver.position).normalized, out hit, maxDistance))
-            {
-                allHits.Add(hit);
-            }
+           RaycastHit[] sphereHits = Physics.SphereCastAll(origin, raycastSphereRadius / i, transmitterBackwards, maxDistance);
+           allHits.AddRange(sphereHits);
         }
 
         foreach (RaycastHit hit in allHits) 
@@ -89,8 +78,8 @@ public class SonarScript : MonoBehaviour
         }
 
          // Check if raycast hit the sensor
-        if (hitTransmitter.collider.transform.parent != transform ||
-            hitReceiver.collider.transform.parent != transform)
+        if (hitTransmitter.collider.transform != transmitter ||
+            hitReceiver.collider.transform != receiver)
         {
             return false;
         }
@@ -103,7 +92,7 @@ public class SonarScript : MonoBehaviour
         }
 
         // Check angle
-        if (Vector3.Angle(transmitterBackwards, directionToTransmitter * -1) > measuringAngleEuler ||
+        if (Vector3.Angle(transmitterBackwards, directionToTransmitter * -1) > measuringAngleEuler &&
             Vector3.Angle(receiverBackwards, directionToReceiver * -1) > measuringAngleEuler)
         {
             return false;
