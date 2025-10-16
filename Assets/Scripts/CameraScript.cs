@@ -18,13 +18,10 @@ public class CameraScript : MonoBehaviour
     private void Awake()
     {
         Cursor.visible = false;
+        zoom = defaultZoom;
+        Cursor.lockState = CursorLockMode.Locked;
         lookAction = InputSystem.actions.FindAction("Look");
         zoomAction = InputSystem.actions.FindAction("Zoom");
-    }
-
-    private void Start()
-    {
-        zoom = defaultZoom;
     }
 
     private void Update()
