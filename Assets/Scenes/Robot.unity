@@ -413,11 +413,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63c3eb09c98c0fe42ab19b9452f2ba1a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 0.3
+  turnSpeed: 0.2
   zoomSpeed: 5
   maxZoom: 5
   minZoom: 0.8
   defaultZoom: 2
+  freeCameraSpeed: 7
   cameraObject: {fileID: 1438722124}
   pivotOffset: {x: 0, y: 0.25, z: 0}
 --- !u!1001 &342166452
@@ -1485,6 +1486,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SonarScript
   transmitter: {fileID: 1860193892426825920}
   receiver: {fileID: 1860193892426825921}
+  precision: 4
   maxDistance: 2
   minDistance: 0.02
   measuringAngleEuler: 15
