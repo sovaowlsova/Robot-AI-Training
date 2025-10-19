@@ -9,7 +9,7 @@ public class CameraScript : MonoBehaviour
     [SerializeField] private float minZoom;
     [SerializeField] private float defaultZoom;
     [SerializeField] private float freeCameraSpeed;
-    [SerializeField] private Transform cameraObject;
+    [SerializeField] private Transform cameraSubject;
     [SerializeField] private Vector3 pivotOffset;
 
     private InputAction lookAction;
@@ -21,7 +21,7 @@ public class CameraScript : MonoBehaviour
     private bool isCameraLocked = true;
 
     private FoxyController foxyController;
-    private FoxyController foxyControllerAI;
+    private FoxyControllerAI foxyControllerAI;
 
     private void Awake()
     {
@@ -32,7 +32,8 @@ public class CameraScript : MonoBehaviour
         zoomAction = InputSystem.actions.FindAction("Zoom");
         switchCameraModeAction = InputSystem.actions.FindAction("SwitchCameraMode");
         moveAction = InputSystem.actions.FindAction("Move");
-        foxyController = cameraObject.GetComponent<FoxyController>();
+        foxyController = cameraSubject.GetComponent<FoxyController>();
+        foxyControllerAI = cameraSubject.GetComponent<FoxyControllerAI>();
     }
 
     private void Update()
@@ -62,7 +63,7 @@ public class CameraScript : MonoBehaviour
     private void HandleLockedCamera()
     {
         zoom = Mathf.Clamp(zoom - zoomAction.ReadValue<Vector2>().y / zoomSpeed, minZoom, maxZoom);
-        Vector3 pivotWithOffset = cameraObject.position + pivotOffset;
+        Vector3 pivotWithOffset = cameraSubject.position + pivotOffset;
 
         
         transform.LookAt(pivotWithOffset);
@@ -91,7 +92,8 @@ public class CameraScript : MonoBehaviour
         if (isSwitchKeyPressed)
         {
             isCameraLocked = !isCameraLocked;
-
+            foxyController.enabled = !foxyController.enabled;
+            foxyControllerAI.enabled = !foxyControllerAI.enabled;
         }
     }
 }
