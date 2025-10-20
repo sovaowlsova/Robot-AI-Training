@@ -97,9 +97,27 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "SwitchCameraMode",
+                    "name": "FreeCameraSwitch",
                     "type": "Button",
                     "id": "d89be601-7708-4088-bec6-abcd229c200e",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "CommandCameraSwitch",
+                    "type": "Button",
+                    "id": "604f8f36-2cac-45ec-ad5d-3cd0491c8440",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "AISwitch",
+                    "type": "Button",
+                    "id": "150d682b-0740-4d5d-b8c5-2cf91bda51b0",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -510,7 +528,29 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "SwitchCameraMode",
+                    "action": "FreeCameraSwitch",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "96e70b0d-0b41-44da-b695-00900b5a679a",
+                    "path": "<Keyboard>/leftCtrl",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "CommandCameraSwitch",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "035fe249-252f-424b-9886-d62e8eff798a",
+                    "path": "<Keyboard>/tab",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "AISwitch",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

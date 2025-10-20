@@ -3,50 +3,69 @@ using UnityEngine.InputSystem;
 
 public class CameraScript : MonoBehaviour
 {
-    [SerializeField] private float turnSpeed;
-    [SerializeField] private float zoomSpeed;
-    [SerializeField] private float maxZoom;
-    [SerializeField] private float minZoom;
-    [SerializeField] private float defaultZoom;
-    [SerializeField] private float freeCameraSpeed;
+    [SerializeField] private float turnSpeed = 0.2f;
+    [SerializeField] private float zoomSpeed = 5f;
+    [SerializeField] private float maxZoom = 5f;
+    [SerializeField] private float minZoom = 0.8f;
+    [SerializeField] private float defaultZoom = 2f;
+    [SerializeField] private float defaultCommandCameraSize = 2.5f;
+    [SerializeField] private float freeCameraSpeed = 7f;
     [SerializeField] private Transform cameraSubject;
-    [SerializeField] private Vector3 pivotOffset;
+    [SerializeField] private Vector3 pivotOffset = Vector3.zero;
+    [SerializeField] private float commandCameraHeight;
 
     private InputAction lookAction;
     private InputAction zoomAction;
-    private InputAction switchCameraModeAction;
+    private InputAction freeCameraSwitchAction;
+    private InputAction commandCameraSwitchAction;
     private InputAction moveAction;
     private float zoom;
 
-    private bool isCameraLocked = true;
+    private CameraMode currentCameraMode = CameraMode.ORBITAL;
+    private CameraMode beforeCommandCameraMode = CameraMode.ORBITAL;
+    private bool commandCameraEnabled = false;
 
-    private FoxyController foxyController;
-    private FoxyControllerAI foxyControllerAI;
+    private Camera thisCamera;
 
     private void Awake()
     {
         Cursor.visible = false;
         zoom = defaultZoom;
         Cursor.lockState = CursorLockMode.Locked;
+
         lookAction = InputSystem.actions.FindAction("Look");
         zoomAction = InputSystem.actions.FindAction("Zoom");
-        switchCameraModeAction = InputSystem.actions.FindAction("SwitchCameraMode");
+        freeCameraSwitchAction = InputSystem.actions.FindAction("FreeCameraSwitch");
+        commandCameraSwitchAction = InputSystem.actions.FindAction("commandCameraSwitch");
         moveAction = InputSystem.actions.FindAction("Move");
-        foxyController = cameraSubject.GetComponent<FoxyController>();
-        foxyControllerAI = cameraSubject.GetComponent<FoxyControllerAI>();
+
+        thisCamera = transform.GetComponent<Camera>();
     }
 
     private void Update()
     {
         HandleCameraModeSwtich();
-        if (isCameraLocked)
-        {
-            HandleLockedCamera();
-        }
-        else
+        if (currentCameraMode == CameraMode.FREE)
         {
             HandleFreeCamera();
         }
+        else if (currentCameraMode == CameraMode.ORBITAL)
+        {
+            HandleOrbitalCamera();
+        }
+        else if (currentCameraMode == CameraMode.COMMAND)
+        {
+            if (!commandCameraEnabled)
+            {
+                SwitchCommandCamera();
+            }
+            HandleCommandCamera();
+        }
+    }
+    
+    public CameraMode GetCameraMode()
+    {
+        return currentCameraMode;
     }
 
     private void HandleFreeCamera()
@@ -60,15 +79,49 @@ public class CameraScript : MonoBehaviour
         transform.eulerAngles = GetNewEulerRotation();
     }
 
-    private void HandleLockedCamera()
+    private void HandleOrbitalCamera()
     {
-        zoom = Mathf.Clamp(zoom - zoomAction.ReadValue<Vector2>().y / zoomSpeed, minZoom, maxZoom);
+        zoom = GetNewZoom();
         Vector3 pivotWithOffset = cameraSubject.position + pivotOffset;
 
-        
         transform.LookAt(pivotWithOffset);
         transform.eulerAngles = GetNewEulerRotation();
         transform.position = pivotWithOffset - transform.forward * zoom;
+    }
+
+    private void HandleCommandCamera()
+    {
+        Vector2 moveRes = moveAction.ReadValue<Vector2>();
+        float horizontalInput = moveRes.x;
+        float verticalInput = moveRes.y;
+
+        transform.position += transform.up * verticalInput * freeCameraSpeed * Time.deltaTime;
+        transform.position += transform.right * horizontalInput * freeCameraSpeed * Time.deltaTime;
+        zoom = GetNewZoom();
+        thisCamera.orthographicSize = defaultCommandCameraSize * zoom;
+
+        
+    }
+    
+    private void SwitchCommandCamera()
+    {
+        commandCameraEnabled = !commandCameraEnabled;
+
+        if (commandCameraEnabled)
+        {
+            beforeCommandCameraMode = currentCameraMode;
+            currentCameraMode = CameraMode.COMMAND;
+            transform.position = transform.position + new Vector3(0, commandCameraHeight, 0);
+            transform.rotation = Quaternion.Euler(new Vector3(90, 0, 0));
+            thisCamera.orthographic = true;
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+        } else
+        {
+            thisCamera.orthographic = false;
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+        }
     }
 
     private Vector3 GetNewEulerRotation()
@@ -88,12 +141,41 @@ public class CameraScript : MonoBehaviour
 
     private void HandleCameraModeSwtich()
     {
-        bool isSwitchKeyPressed = switchCameraModeAction.triggered && switchCameraModeAction.ReadValue<float>() > 0;
-        if (isSwitchKeyPressed)
+        bool freeCameraSwitchPressed = freeCameraSwitchAction.triggered && freeCameraSwitchAction.ReadValue<float>() > 0;
+        bool commandCameraSwitchPressed = commandCameraSwitchAction.triggered && commandCameraSwitchAction.ReadValue<float>() > 0;
+
+        if (commandCameraSwitchPressed)
         {
-            isCameraLocked = !isCameraLocked;
-            foxyController.enabled = !foxyController.enabled;
-            foxyControllerAI.enabled = !foxyControllerAI.enabled;
+            if (currentCameraMode != CameraMode.COMMAND)
+            {
+                SwitchCommandCamera();
+            }
+            else
+            {
+                SwitchCommandCamera();
+                currentCameraMode = beforeCommandCameraMode;
+            }
+
         }
+        else if (freeCameraSwitchPressed)
+        {
+            if (commandCameraEnabled)
+            {
+                SwitchCommandCamera();
+            }
+            if (currentCameraMode != CameraMode.FREE)
+            {
+                currentCameraMode = CameraMode.FREE;
+            }
+            else
+            {
+                currentCameraMode = CameraMode.ORBITAL;
+            }
+        }
+    }
+    
+    private float GetNewZoom()
+    {
+        return Mathf.Clamp(zoom - zoomAction.ReadValue<Vector2>().y / zoomSpeed, minZoom, maxZoom);
     }
 }

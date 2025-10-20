@@ -3,6 +3,8 @@ using UnityEngine.InputSystem;
 
 public class FoxyController : MonoBehaviour
 {
+    [SerializeField] private CameraScript cameraScript;
+
     private FoxyControlScript foxyControlScript;
 
     private InputAction moveAction;
@@ -22,6 +24,10 @@ public class FoxyController : MonoBehaviour
 
     private void Update()
     {
+        if (cameraScript.GetCameraMode() == CameraMode.COMMAND)
+        {
+            return;
+        }
         GetInput();
         SetInput();
     }
