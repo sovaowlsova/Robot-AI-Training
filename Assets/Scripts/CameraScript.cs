@@ -26,6 +26,7 @@ public class CameraScript : MonoBehaviour
     private bool commandCameraEnabled = false;
 
     private Camera thisCamera;
+    private CommandScript commandScript;
 
     private void Awake()
     {
@@ -40,6 +41,7 @@ public class CameraScript : MonoBehaviour
         moveAction = InputSystem.actions.FindAction("Move");
 
         thisCamera = transform.GetComponent<Camera>();
+        commandScript = transform.GetComponent<CommandScript>();
     }
 
     private void Update()
@@ -111,16 +113,18 @@ public class CameraScript : MonoBehaviour
         {
             beforeCommandCameraMode = currentCameraMode;
             currentCameraMode = CameraMode.COMMAND;
-            transform.position = transform.position + new Vector3(0, commandCameraHeight, 0);
+            transform.position = new Vector3(cameraSubject.position.x, commandCameraHeight, cameraSubject.position.z);
             transform.rotation = Quaternion.Euler(new Vector3(90, 0, 0));
             thisCamera.orthographic = true;
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
+            commandScript.enabled = true;
         } else
         {
             thisCamera.orthographic = false;
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
+            commandScript.enabled = false;
         }
     }
 
@@ -141,8 +145,8 @@ public class CameraScript : MonoBehaviour
 
     private void HandleCameraModeSwtich()
     {
-        bool freeCameraSwitchPressed = freeCameraSwitchAction.triggered && freeCameraSwitchAction.ReadValue<float>() > 0;
-        bool commandCameraSwitchPressed = commandCameraSwitchAction.triggered && commandCameraSwitchAction.ReadValue<float>() > 0;
+        bool freeCameraSwitchPressed = freeCameraSwitchAction.WasPressedThisFrame();
+        bool commandCameraSwitchPressed = commandCameraSwitchAction.WasPressedThisFrame();
 
         if (commandCameraSwitchPressed)
         {

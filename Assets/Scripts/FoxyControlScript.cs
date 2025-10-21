@@ -48,6 +48,8 @@ public class FoxyControlScript : MonoBehaviour
         HandleSteering();
         UpdateWheels();
         isBraking = false;
+        verticalInput = 0;
+        horizontalInput = 0;
     }
 
     public void SetInput(float speed, float turn)

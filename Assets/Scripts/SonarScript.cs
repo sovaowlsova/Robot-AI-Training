@@ -64,6 +64,11 @@ public class SonarScript : MonoBehaviour
     
     private bool ValidateHit(RaycastHit hit)
     {
+        if (hit.collider.gameObject.layer == LayerMask.NameToLayer("MovePoint"))
+        {
+            return false;
+        }
+
         RaycastHit hitTransmitter;
         RaycastHit hitReceiver;
 
