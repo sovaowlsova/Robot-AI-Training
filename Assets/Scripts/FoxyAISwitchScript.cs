@@ -16,7 +16,7 @@ public class FoxyAISwitchScript : MonoBehaviour
 
     private void Update()
     {
-        bool AISwitchPressed = AISwitchAction.triggered && AISwitchAction.ReadValue<float>() > 0;
+        bool AISwitchPressed = AISwitchAction.WasPressedThisFrame();
         if (AISwitchPressed)
         {
             foxyController.enabled = !foxyController.enabled;
