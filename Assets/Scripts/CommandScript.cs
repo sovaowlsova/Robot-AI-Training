@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 public class CommandScript : MonoBehaviour
 {
     [SerializeField] private float commandSphereScale = 0.2f;
+    [SerializeField] private Material commandSphereMaterial;
 
     private Transform movePointsObject;
     private Transform commandSphere;
@@ -22,7 +23,7 @@ public class CommandScript : MonoBehaviour
 
         commandSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere).transform;
         commandSphere.localScale = new Vector3(commandSphereScale, commandSphereScale, commandSphereScale);
-        commandSphere.GetComponent<Renderer>().material.color = Color.green;
+        commandSphere.GetComponent<Renderer>().material = commandSphereMaterial;
         commandSphere.GetComponent<SphereCollider>().isTrigger = true;
         commandSphere.gameObject.layer = LayerMask.NameToLayer("MovePoint");
         commandSphere.tag = "MovePoint";
@@ -81,7 +82,7 @@ public class CommandScript : MonoBehaviour
             return;
         }
 
-        obj.GetComponent<Renderer>().material.color = Color.white;
+        obj.GetComponent<Renderer>().material.color = Color.red;
         highlightedMovePoint = obj;
     }
 
@@ -162,7 +163,7 @@ public class CommandScript : MonoBehaviour
     {
         if (highlightedMovePoint)
         {
-            highlightedMovePoint.GetComponent<Renderer>().material.color = Color.green;
+            highlightedMovePoint.GetComponent<Renderer>().material.color = commandSphereMaterial.color;
             highlightedMovePoint = null;
         }
     }
