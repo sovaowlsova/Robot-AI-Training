@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FoxyControllerAI : MonoBehaviour
+public class FoxyControllerAI : AIController 
 {
     [SerializeField] Transform target;
     [SerializeField] private CommandScript user;
@@ -15,11 +15,11 @@ public class FoxyControllerAI : MonoBehaviour
     [SerializeField] private float loopingPreventDistance = 1f;
     [SerializeField] private float loopingPreventDotProduct = 0.5f;
 
-    private FoxyControlScript foxyControlScript;
+    private IControllable controlScript;
 
     private void Awake()
     {
-        foxyControlScript = transform.GetComponent<FoxyControlScript>();
+        controlScript = transform.GetComponent<IControllable>();
     }
 
     private void Update()
@@ -32,7 +32,7 @@ public class FoxyControllerAI : MonoBehaviour
             targetPosition = movePoints[0].position;
         } else
         {
-            foxyControlScript.Brake();
+            controlScript.Brake();
             return;
         }
 
@@ -47,8 +47,8 @@ public class FoxyControllerAI : MonoBehaviour
         if (distanceToTarget < targetReachedDistance)
         {
             user.RemoveMovePoint(movePoints[0]);
-            foxyControlScript.Brake();
-            foxyControlScript.SetInput(0f, 0f);
+            controlScript.Brake();
+            controlScript.SetInput(0f, 0f);
             return;
         }
 
@@ -61,7 +61,7 @@ public class FoxyControllerAI : MonoBehaviour
             speedInput = distanceToTarget > turnaroundDistance ? speed : -speed;
         }
 
-        if (brakeBeforeTargetDistance > distanceToTarget && foxyControlScript.GetSpeed() > minSpeedToBrake)
+        if (brakeBeforeTargetDistance > distanceToTarget && controlScript.GetSpeed() > minSpeedToBrake)
         {
             speedInput *= -1;
         }
@@ -79,6 +79,6 @@ public class FoxyControllerAI : MonoBehaviour
             turnInput = 0;
         }
 
-        foxyControlScript.SetInput(speedInput, turnInput);
+        controlScript.SetInput(speedInput, turnInput);
     }
 }

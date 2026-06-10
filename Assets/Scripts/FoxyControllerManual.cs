@@ -1,11 +1,10 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class FoxyController : MonoBehaviour
+public class FoxyControllerManual : ManualController
 {
     [SerializeField] private CameraScript cameraScript;
-
-    private FoxyControlScript foxyControlScript;
+    private IControllable controlScript;
 
     private InputAction moveAction;
     private InputAction brakeAction;
@@ -17,9 +16,9 @@ public class FoxyController : MonoBehaviour
 
     private void Awake()
     {
+        controlScript = transform.GetComponent<IControllable>();
         moveAction = InputSystem.actions.FindAction("Move");
         brakeAction = InputSystem.actions.FindAction("Jump");
-        foxyControlScript = transform.GetComponent<FoxyControlScript>();
     }
 
     private void Update()
@@ -42,10 +41,10 @@ public class FoxyController : MonoBehaviour
 
     private void SetInput()
     {
-        foxyControlScript.SetInput(verticalInput, horizontalInput);
+        controlScript.SetInput(verticalInput, horizontalInput);
         if (isBraking)
         {
-            foxyControlScript.Brake();
+            controlScript.Brake();
         }
     }
 }

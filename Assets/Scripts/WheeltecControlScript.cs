@@ -1,18 +1,11 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
-public class FoxyControlScript : MonoBehaviour, IControllable
+public class WheeltecControlScript : MonoBehaviour, IControllable
 {
     [SerializeField] private float motorForce = 100f;
     [SerializeField] private float brakeForce = 1000f;
     [SerializeField] private float maxSteerAngle = 15f;
     [SerializeField] private float steerSpeed = 20f;
-
-    [SerializeField] private float warningDistance = 1;
-    [SerializeField] private float stopDistance = 0.2f;
-
-    [SerializeField] private LampScript warningLamp;
-    [SerializeField] private LampScript stopLamp;
 
     [SerializeField] private Transform frontLeftWheelTransform;
     [SerializeField] private Transform frontRightWheelTransform;
@@ -22,9 +15,7 @@ public class FoxyControlScript : MonoBehaviour, IControllable
     [SerializeField] private WheelCollider frontLeftWheelColldier;
     [SerializeField] private WheelCollider frontRightWheelColldier;
     [SerializeField] private WheelCollider rearLeftWheelColldier;
-    [SerializeField] private WheelCollider rearRighttWheelColldier;
-
-    [SerializeField] private SonarScript sonar;
+    [SerializeField] private WheelCollider rearRightWheelColldier;
 
     private float verticalInput;
     private float horizontalInput;
@@ -43,7 +34,6 @@ public class FoxyControlScript : MonoBehaviour, IControllable
 
     private void Update()
     {
-        HandleSonar();
         HandleMotor();
         HandleSteering();
         UpdateWheels();
@@ -68,34 +58,15 @@ public class FoxyControlScript : MonoBehaviour, IControllable
         return rb.linearVelocity.magnitude;
     }
 
-    private void HandleSonar()
-    {
-        if (sonar.GetDistance() < warningDistance)
-        {
-            warningLamp.Toggle(true);
-        }
-        else
-        {
-            warningLamp.Toggle(false);
-        }
-
-        if (sonar.GetDistance() < stopDistance)
-        {
-            stopLamp.Toggle(true);
-
-            if (verticalInput >= 0)
-            {
-                isBraking = true;
-            }
-        }
-        else
-        {
-            stopLamp.Toggle(false);
-        }
-    }
-
     private void HandleMotor()
     {
+        if (verticalInput < 0)
+        {
+            verticalInput = -1;
+        } else if (verticalInput > 0)
+        {
+            verticalInput = 1;
+        }
         float newTorque = -verticalInput * motorForce;
         frontLeftWheelColldier.motorTorque = frontRightWheelColldier.motorTorque = newTorque;
 
@@ -108,7 +79,7 @@ public class FoxyControlScript : MonoBehaviour, IControllable
         frontLeftWheelColldier.brakeTorque = currentBrakingForce;
         frontRightWheelColldier.brakeTorque = currentBrakingForce;
         rearLeftWheelColldier.brakeTorque = currentBrakingForce;
-        rearRighttWheelColldier.brakeTorque = currentBrakingForce;
+        rearRightWheelColldier.brakeTorque = currentBrakingForce;
     }
 
     private void HandleSteering()
@@ -149,6 +120,6 @@ public class FoxyControlScript : MonoBehaviour, IControllable
         UpdateWheelTransform(frontLeftWheelColldier, frontLeftWheelTransform);
         UpdateWheelTransform(frontRightWheelColldier, frontRightWheelTransform);
         UpdateWheelTransform(rearLeftWheelColldier, rearLeftWheelTransform);
-        UpdateWheelTransform(rearRighttWheelColldier, rearRightWheelTransform);
+        UpdateWheelTransform(rearRightWheelColldier, rearRightWheelTransform);
     }
 }

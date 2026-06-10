@@ -3,15 +3,15 @@ using UnityEngine.InputSystem;
 
 public class FoxyAISwitchScript : MonoBehaviour
 {
+    private AIController AIScript;
+    [SerializeField] private ManualController manualControllerScript;
+
     private InputAction AISwitchAction;
-    private FoxyController foxyController;
-    private FoxyControllerAI foxyControllerAI;
 
     private void Awake()
     {
         AISwitchAction = InputSystem.actions.FindAction("AISwitch");
-        foxyController = transform.GetComponent<FoxyController>();
-        foxyControllerAI = transform.GetComponent<FoxyControllerAI>();
+        AIScript = transform.GetComponent<AIController>();
     }
 
     private void Update()
@@ -19,8 +19,8 @@ public class FoxyAISwitchScript : MonoBehaviour
         bool AISwitchPressed = AISwitchAction.WasPressedThisFrame();
         if (AISwitchPressed)
         {
-            foxyController.enabled = !foxyController.enabled;
-            foxyControllerAI.enabled = !foxyControllerAI.enabled;   
+            manualControllerScript.enabled = !manualControllerScript.enabled;
+            AIScript.enabled = !AIScript.enabled;   
         }
     }
 }
